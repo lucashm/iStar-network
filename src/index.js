@@ -1,10 +1,13 @@
 import _ from 'lodash';
 import './style.css';
 import Vis from '../node_modules/vis/dist/vis.js';
+import DeleteEvent from './deleting.js';
+import CreateEvent from './creating.js';
 // import '../node_modules/vis/dist/vis.css';
 
-function component() {
-   let element = document.createElement('div');
+const component = () => {
+  let element = document.createElement('div');
+  element.id = "maindiv";
   let nodes = new Vis.DataSet([
     {id: 1, label: 'Node 1'},
     {id: 2, label: 'Node 2'},
@@ -27,14 +30,30 @@ function component() {
     edges: edges
   }
 
-  let options = {};
+  let options = { nodes: {color: 'red'} };
+
 
   const network = new Vis.Network(container, data, options);
-//  Lodash, now imported by this script
-  element.innerHTML = _.join(['Hello', 'webpack'], ' ');
-  element.classList.add('hello');
 
+  network.on("click", function (params) {
+    params.event = "[original event]";
+    document.getElementById('eventSpan').innerHTML = '<h2>Click event:</h2>' + JSON.stringify(params, null, 4)
+    console.log('click event, getNodeAt returns: ' + this.getNodeAt(params.pointer.DOM));
+  });
+
+  let deletebtn = document.createElement('button');
+  deletebtn.innerHTML = 'Delete!';
+  deletebtn.onclick = DeleteEvent;
+
+  let createbtn = document.createElement('button');
+  createbtn.innerHTML = 'Create!';
+  createbtn.onclick = CreateEvent;
+
+  element.appendChild(deletebtn);
+  element.appendChild(createbtn);
   return element;
 }
 
+
 document.body.appendChild(component());
+// document.head.appendChild(deleting());
